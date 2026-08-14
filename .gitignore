@@ -18,3 +18,8 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+frontend/
+models/beeacoustic_model1/data/
+models/beeacoustic_model1/models/
+models/beeacoustic_model1/notebooks/

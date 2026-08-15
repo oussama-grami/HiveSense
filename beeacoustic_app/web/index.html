@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <div id="recaptcha-container"></div>
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -29,8 +30,11 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>beeacoustic_app</title>
+  <title>HiveSense</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+</script>
 </head>
 <body>
   <!--

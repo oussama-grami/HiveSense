@@ -7,6 +7,7 @@ import numpy as np
 import librosa
 import tempfile
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from model import BeeModel
 
 # ─── CONFIGURATION ────────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ RECOMMENDATIONS = {
 
 # ─── CHARGER LE MODÈLE ────────────────────────────────────────────────────────
 app   = Flask(__name__)
+CORS(app)
 model = BeeModel(num_classes=4).to(DEVICE)
 
 checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)

@@ -154,7 +154,7 @@ class _DashboardView extends StatelessWidget {
         IconButton(
   icon: const Icon(Icons.account_circle_rounded,
       color: AppColors.primary),
-  onPressed: () => context.go('/profile'),
+  onPressed: () => context.push('/profile'),
 ),
       ],
     );

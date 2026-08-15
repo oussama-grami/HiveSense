@@ -288,6 +288,9 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   final ok = await auth.verifyOTP(_otp);
+  print('verifyOTP résultat : $ok');
+  print('user après verify : ${auth.user?.uid}');
+  print('isLoggedIn : ${auth.isLoggedIn}');
 
   if (!mounted) return;
 
@@ -301,8 +304,9 @@ class _OtpScreenState extends State<OtpScreen> {
         role:        widget.role ?? 'Apiculteur',
       );
     }
-    // Le GoRouterRefreshStream va rediriger automatiquement
-    // grâce à authStateChanges — pas besoin de context.go
+    if (!mounted) return;
+    // Force la navigation
+    context.go('/');
   }
 }
 }

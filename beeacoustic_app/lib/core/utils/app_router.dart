@@ -27,18 +27,17 @@ final GoRouter appRouter = GoRouter(
   refreshListenable: GoRouterRefreshStream(
       FirebaseAuth.instance.authStateChanges()),
   redirect: (context, state) {
-    final auth     = context.read<ap.AuthProvider>();
-    final loggedIn = auth.isLoggedIn;
-    final loc      = state.uri.toString();
+  final loggedIn = FirebaseAuth.instance.currentUser != null;
+  final loc      = state.uri.toString();
 
-    final isPublic = loc.startsWith('/splash') ||
-                     loc.startsWith('/login')  ||
-                     loc.startsWith('/otp');
+  final isPublic = loc.startsWith('/splash') ||
+                   loc.startsWith('/login')  ||
+                   loc.startsWith('/otp');
 
-    if (!loggedIn && !isPublic) return '/login';
-    if (loggedIn  && loc == '/login') return '/';
-    return null;
-  },
+  if (!loggedIn && !isPublic) return '/login';
+  if (loggedIn  && (loc == '/login' || loc.startsWith('/otp'))) return '/';
+  return null;
+},
   routes: [
     GoRoute(
       path: '/splash',

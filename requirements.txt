@@ -1,0 +1,10 @@
+librosa
+soundfile
+matplotlib
+seaborn
+numpy
+torch
+
+fastapi
+uvicorn
+python-multipart

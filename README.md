@@ -235,7 +235,7 @@ HiveSense/
 
 | Membre | Rôle |
 |---|---|
-| **Oussema Guerami** | Modèle 1 (CNN) + Application Flutter + IoT |
+| **Oussema Guerami** | Modèle 1 (CNN)  |
 | **Chadha Grami** | Modèle 2 (Autoencodeurs) |
 
 **Encadrant :** Yasser Ben Nejma — Think&Solution  

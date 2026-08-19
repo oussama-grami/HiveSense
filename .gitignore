@@ -1,0 +1,58 @@
+# =====================================================
+# Python
+# =====================================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+
+# Environnements virtuels
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =====================================================
+# Modèles et fichiers générés
+# =====================================================
+
+*.pkl
+*.joblib
+
+# Exclure les données
+models/beeacoustic_model1/data/
+
+# Exclure les modèles entraînés
+models/beeacoustic_model1/models/
+
+# =====================================================
+# Flutter
+# =====================================================
+
+# Dépendances et fichiers générés
+beeacoustic_app/.dart_tool/
+beeacoustic_app/build/
+beeacoustic_app/.flutter-plugins
+beeacoustic_app/.flutter-plugins-dependencies
+beeacoustic_app/.packages
+
+# IDE Flutter
+beeacoustic_app/.idea/
+
+# =====================================================
+# VS Code
+# =====================================================
+
+.vscode/
+
+# =====================================================
+# Système d'exploitation
+# =====================================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini

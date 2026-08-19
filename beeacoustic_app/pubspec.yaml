@@ -1,0 +1,54 @@
+name: beeacoustic_app
+description: Système intelligent de surveillance acoustique des ruches.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Navigation
+  go_router: ^13.0.0
+  
+  # HTTP & API
+  http: ^1.2.0
+  dio: ^5.4.0
+  
+  # State management
+  provider: ^6.1.0
+  
+  # Graphiques
+  fl_chart: ^0.68.0
+  
+  # Audio
+  file_picker: ^8.0.0
+  just_audio: ^0.9.36
+  
+  # UI
+  cupertino_icons: ^1.0.6
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.1
+  
+  # Utilitaires
+  intl: ^0.19.0
+  shared_preferences: ^2.2.2
+  permission_handler: ^11.3.0
+  firebase_core: ^4.13.0
+  firebase_auth: ^6.5.7
+  cloud_firestore: ^6.8.0
+  image_picker: ^1.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/

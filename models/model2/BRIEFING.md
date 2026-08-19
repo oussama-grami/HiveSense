@@ -1,7 +1,7 @@
 # Modèle 2 — Détection d'anomalies acoustiques
 
 ## Rôle
-
+ 
 Détecter si le son de la ruche est normal (colonie active), absent (colonie morte ou abandonnée), ou anormal (reine manquante). Contrairement au Modèle 1 qui identifie précisément l'état de la reine, ce modèle sert de **premier filtre d'alerte** : il détecte que quelque chose ne va pas, même sans savoir exactement quoi.
 
 ## Classes de sortie

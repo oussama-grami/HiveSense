@@ -1,3 +1,55 @@
+# ==========================================
+# Datasets, Data Prétraitée & Arrays
+# ==========================================
+**/data/
+data/
+**/processed_data/
+processed_data/
+*.npy
+*.npz
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Fichiers Audio
+*.wav
+*.mp3
+*.flac
+*.ogg
+
+# Modèles sauvegardés & Checkpoints (lourds)
+*.pth
+*.pt
+*.h5
+*.tflite
+*.onnx
+*.ckpt
+**/saved_models/
+saved_models/
+
+# ==========================================
+# Graphiques & Sorties Générées
+# ==========================================
+**/output/
+output/
+*.log
+
+# ==========================================
+# Environnement Python, Cache & IDE
+# ==========================================
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+.env
 # =====================================================
 # Python
 # =====================================================

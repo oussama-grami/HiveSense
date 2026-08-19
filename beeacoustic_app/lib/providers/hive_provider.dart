@@ -73,14 +73,22 @@ class HiveProvider extends ChangeNotifier {
 
   // ── Vérifier statut APIs ──────────────────────────────────────────────────
   Future<void> checkApiStatus() async {
-    final results = await Future.wait([
-      _api.checkModel1Health(),
-      _api.checkModel2Health(),
-    ]);
-    _model1Online = results[0]['ok'] as bool? ?? false;
-    _model2Online = results[1]['ok'] as bool? ?? false;
-    notifyListeners();
+  try {
+    final result = await _api.checkModel1Health();
+    _model1Online = result['ok'] as bool? ?? false;
+  } catch (_) {
+    _model1Online = false;
   }
+
+  try {
+    final result = await _api.checkModel2Health();
+    _model2Online = result['ok'] as bool? ?? false;
+  } catch (_) {
+    _model2Online = false;
+  }
+
+  notifyListeners();
+}
 
   // ── Prédiction audio ──────────────────────────────────────────────────────
   Future<AIPrediction?> analyzeAudio(

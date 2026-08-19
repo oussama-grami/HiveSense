@@ -36,10 +36,15 @@ class _LoginScreenState extends State<LoginScreen>
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+void initState() {
+  super.initState();
+  _tabController = TabController(length: 2, vsync: this);
+  // Réinitialiser l'état auth au chargement
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final auth = context.read<ap.AuthProvider>();
+    auth.resetLoading();
+  });
+}
 
   @override
   void dispose() {
@@ -389,41 +394,60 @@ class _LoginScreenState extends State<LoginScreen>
   // ── Actions ───────────────────────────────────────────────────────────────
   Future<void> _handleLogin(ap.AuthProvider auth) async {
   auth.clearError();
+
+  if (_phoneLogin.text.trim().isEmpty) {
+    _showError('Le numéro de téléphone est obligatoire.');
+    return;
+  }
+  if (_passwordLogin.text.isEmpty) {
+    _showError('Le mot de passe est obligatoire.');
+    return;
+  }
+
   final raw   = _phoneLogin.text.trim()
       .replaceAll(' ', '')
       .replaceAll('-', '');
   final phone = raw.startsWith('+') ? raw : '+216$raw';
-  final password = _passwordLogin.text.trim();
 
   print('Numéro login : "$phone"');
 
-  if (raw.isEmpty || password.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Remplissez tous les champs.'),
-        backgroundColor: AppColors.error,
-      ),
-    );
-    return;
-  }
-
-  final ok = await auth.login(phone, password);
+  final ok = await auth.login(phone, _passwordLogin.text.trim());
   if (ok && mounted) {
     await auth.sendOTP(phone);
-    if (mounted) context.go('/otp?phone=$phone&mode=login');
+    if (mounted) context.go('/otp?phone=${Uri.encodeComponent(phone)}&mode=login');
   }
 }
 
 Future<void> _handleRegister(ap.AuthProvider auth) async {
   auth.clearError();
 
+  // Validation des champs
+  if (_firstName.text.trim().isEmpty) {
+    _showError('Le prénom est obligatoire.');
+    return;
+  }
+  if (_lastName.text.trim().isEmpty) {
+    _showError('Le nom est obligatoire.');
+    return;
+  }
+  if (_phoneRegister.text.trim().isEmpty) {
+    _showError('Le numéro de téléphone est obligatoire.');
+    return;
+  }
+  if (_phoneRegister.text.trim().replaceAll(' ', '').length < 8) {
+    _showError('Le numéro doit contenir au moins 8 chiffres.');
+    return;
+  }
+  if (_passwordRegister.text.isEmpty) {
+    _showError('Le mot de passe est obligatoire.');
+    return;
+  }
+  if (_passwordRegister.text.length < 6) {
+    _showError('Le mot de passe doit contenir au moins 6 caractères.');
+    return;
+  }
   if (_passwordRegister.text != _confirmPassword.text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Les mots de passe ne correspondent pas.'),
-        backgroundColor: AppColors.error,
-      ),
-    );
+    _showError('Les mots de passe ne correspondent pas.');
     return;
   }
 
@@ -434,17 +458,36 @@ Future<void> _handleRegister(ap.AuthProvider auth) async {
 
   print('Numéro inscription : "$phone"');
 
-  final ok = await auth.sendOTP(phone);
+  final ok = await auth.sendOTP(phone, checkExisting: true);
   if (ok && mounted) {
     context.go(
       '/otp'
       '?phone=${Uri.encodeComponent(phone)}'
       '&mode=register'
-      '&firstName=${Uri.encodeComponent(_firstName.text)}'
-      '&lastName=${Uri.encodeComponent(_lastName.text)}'
+      '&firstName=${Uri.encodeComponent(_firstName.text.trim())}'
+      '&lastName=${Uri.encodeComponent(_lastName.text.trim())}'
       '&password=${Uri.encodeComponent(_passwordRegister.text)}'
       '&role=${Uri.encodeComponent(_selectedRole)}',
     );
   }
+}
+
+void _showError(String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          const Icon(Icons.error_rounded,
+              color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Expanded(child: Text(message)),
+        ],
+      ),
+      backgroundColor: AppColors.error,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12)),
+    ),
+  );
 }
 }

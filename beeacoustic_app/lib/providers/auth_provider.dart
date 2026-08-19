@@ -26,11 +26,27 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // ── Envoyer OTP (Flutter Web) ─────────────────────────────────────────────
-  Future<bool> sendOTP(String phoneNumber) async {
+  Future<bool> sendOTP(String phoneNumber,
+    {bool checkExisting = false}) async {
   _setLoading(true);
   _error = null;
 
   try {
+    // Si inscription, vérifier que le numéro n'existe pas déjà
+    if (checkExisting) {
+      final query = await _firestore
+          .collection('users')
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        _error = 'Un compte existe déjà avec ce numéro. '
+            'Connectez-vous plutôt.';
+        _setLoading(false);
+        return false;
+      }
+    }
+
     _confirmationResult = await FirebaseAuth.instance
         .signInWithPhoneNumber(phoneNumber);
 
@@ -39,7 +55,7 @@ class AuthProvider extends ChangeNotifier {
   } on FirebaseAuthException catch (e) {
     print('Code Firebase : ${e.code}');
     print('Message Firebase : ${e.message}');
-    _error = '${e.code} : ${e.message}';
+    _error = _parseError(e.code);
     _setLoading(false);
     return false;
   } catch (e) {
@@ -82,36 +98,39 @@ class AuthProvider extends ChangeNotifier {
 
   // ── Connexion ─────────────────────────────────────────────────────────────
   Future<bool> login(String phoneNumber, String password) async {
-    _setLoading(true);
-    _error = null;
+  _setLoading(true);
+  _error = null;
 
-    try {
-      final query = await _firestore
-          .collection('users')
-          .where('phoneNumber', isEqualTo: phoneNumber)
-          .where('password',    isEqualTo: password)
-          .get();
+  try {
+    // Vérifier si le numéro existe dans Firestore
+    final query = await _firestore
+        .collection('users')
+        .where('phoneNumber', isEqualTo: phoneNumber)
+        .get();
 
-      if (query.docs.isEmpty) {
-        _error = 'Numéro ou mot de passe incorrect.';
-        _setLoading(false);
-        return false;
-      }
-
-      _setLoading(false);
-      return true;
-    } on FirebaseAuthException catch (e) {
-      _error = _parseError(e.code);
-      _setLoading(false);
-      return false;
-    } catch (e) {
-      print('Erreur login : $e');
-      _error = 'Erreur de connexion.';
+    if (query.docs.isEmpty) {
+      _error = 'Aucun compte trouvé avec ce numéro.';
       _setLoading(false);
       return false;
     }
-  }
 
+    // Vérifier le mot de passe
+    final userData = query.docs.first.data();
+    if (userData['password'] != password) {
+      _error = 'Mot de passe incorrect.';
+      _setLoading(false);
+      return false;
+    }
+
+    _setLoading(false);
+    return true;
+  } catch (e) {
+    print('Erreur login : $e');
+    _error = 'Erreur de connexion.';
+    _setLoading(false);
+    return false;
+  }
+}
   // ── Inscription ───────────────────────────────────────────────────────────
   Future<bool> register({
     required String phoneNumber,
@@ -184,10 +203,12 @@ class AuthProvider extends ChangeNotifier {
 
   // ── Déconnexion ───────────────────────────────────────────────────────────
   Future<void> signOut() async {
-    await _auth.signOut();
-    _user = null;
-    notifyListeners();
-  }
+  _isLoading = false;
+  _error     = null;
+  await _auth.signOut();
+  _user = null;
+  notifyListeners();
+}
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   void _setLoading(bool v) {
@@ -200,6 +221,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  
   String _parseError(String code) {
     switch (code) {
       case 'invalid-phone-number':
@@ -216,4 +238,9 @@ class AuthProvider extends ChangeNotifier {
         return 'Erreur : $code';
     }
   }
+  void resetLoading() {
+  _isLoading = false;
+  _error     = null;
+  notifyListeners();
+}
 }
